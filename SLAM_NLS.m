@@ -4,6 +4,7 @@ function [X_LS, P_LS, I, b, Lg, Lt] = SLAM_NLS(step, k0, u, index_last, X_last, 
 b = 0;
 if op_init == 1
     X0 = X_last;
+    X0 = X0 + 1 * rand(3*step+2*k0,1);
 %     X0 = [0; 0; 2];
 %     for i = 1:step-1
 %         theta = X0(1);
@@ -34,28 +35,43 @@ elseif op_init == 2
     motion = [u(1, i);rot * u(2:3, i)];
     X0(3*i+1:3*i+3) = X0(3*i - 2 : 3*i) + motion;
     X0(3*step+1:end) = X_last(3*i+1:end);
-else
-    % predict
+elseif op_init == 3
+    X0 = zeros(3 * step + 2 * k0, 1);
+elseif op_init == 4
+    load X_LS X_LS
+    X0 = X_LS;
 end
     X0;
     %%
             c = 10^(-6);
-            [I, P_LS,dx, Lg, Lt] = GN(step, k0, u, index_last, X0);
+            [I, P_LS,dx, Lg, Lt, e] = GN(step, k0, u, index_last, X0);
             ep = 0;
             while sum(dx) > c || sum(dx) < -c
                 X0 = X0 + dx;
-                [I, P_LS, dx, Lg, Lt] = GN(step, k0, u, index_last, X0);
+                for i = 1: step
+                    X0(3*step - 2) = rem(X0(3*step - 2),2*pi);
+                    if rem(X0(3*step - 2),2*pi) > pi
+                        X0(3*step - 2) = rem(X0(3*step - 2),2*pi) - 2*pi;
+                    elseif rem(X0(3*step - 2),2*pi) < -pi
+                        X0(3*step - 2) = 2*pi + rem(X0(3*step - 2),2*pi);
+                    else
+                        X0(3*step - 2) = rem(X0(3*step - 2),2*pi);
+                    end
+                end
+                [I, P_LS, dx, Lg, Lt, e] = GN(step, k0, u, index_last, X0);
                 ep = ep+1;
-                if ep > 15
+%                 ep
+%                 e
+                if ep > 30
                     b = 1
-                    dx
+                    dx;
                     break;
                 end
             end
             
+            P_LS = full(I(4:end, 4:end)^(-1));
             
-            
-            ep
+%             ep
             X_LS = X0;
             setting_r = '.--m';
             setting_f = '.g';

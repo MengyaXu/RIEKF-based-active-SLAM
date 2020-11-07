@@ -52,24 +52,32 @@ for i = 1:1:actual_h
                 I_new = [I(1:3*step_c, 1:3*step_c) zeros(3*step_c,3) I(1:3*step_c, 3*step_c+1:end);
                     zeros(3, 3*step_c+3+2*k);
                     I(3*step_c+1:end, 1:3*step_c) zeros(2*k, 3) I(3*step_c+1:end, 3*step_c+1:end)];
-                Jxi = zeros(3,3*step_c+3 + 2*k);
+                I_new = sparse(I_new);
+%                 I_new = sparse(3 * step_c + 3 + 2 * k, 3 * step_c + 3 + 2 * k);
+%                 I_new(1:3*step_c, 1:3*step_c) = I(1:3*step_c, 1:3*step_c);
+                
+                
+                Jxi = sparse(3,3*step_c+3 + 2*k);
                 Jxi(:, 3*step_c-2:3*step_c+3) = [[-1 0 0;
                        -rot * J * u(2:3, i), -diag([1 1])] eye(3)];
 %                    Jxi' / (cov_u) * Jxi;
-                I_new = I_new + Jxi' / (cov_u) * Jxi;
+                I_new = I_new + Jxi' / sparse(cov_u) * Jxi;
                 % =============
             else
                 Lg;
                 Lg = [Lg(1:step_c+i-1, 1:step_c+i-1) zeros(step_c+i-1, 1) Lg(1:step_c+i-1, step_c+i:end);
                     zeros(1, step_c+i + k);
                     Lg(step_c + i:end, 1:step_c+i-1) zeros(k, 1) Lg(step_c+i:end, step_c+i:end)];
-                Agi = zeros(step_c + i + k, 1);
+%                 a = [1:step_c+i-1, 1:step_c+i-1, step_c + i:step_c + i + k, step_c + i:step + i +k];
+%                 b = [1:step_c+i-1, step_c + i:step + i +k,1:step_c+i-1 , step_c + i:step + i +k];
+%                 c = 
+                Agi = sparse(step_c + i + k, 1);
                 Agi(step_c + i - 1: step_c + i) = [-1; 1];
                 %     Ag = [Ag Agi];
                 Lg = Lg + Agi * cov_u(2, 2)^(-1) * Agi';
                 
-                Lt = [Lt zeros(step_c + i - 1, 1);
-                    zeros(1, step_c + i)];
+                Lt = sparse([Lt zeros(step_c + i - 1, 1);
+                    zeros(1, step_c + i)]);
                 At = zeros(step_c + i, 1);
                 At(step_c + i - 1: step_c + i) = [-1; 1];
                 Lt = Lt + At / cov_u(1) * At';
@@ -127,7 +135,7 @@ for i = 1:1:actual_h
                     I_new = I_new + Jzi' / (cov_z) * Jzi;
                     % =========
                 else
-                    Agi = zeros(step_c + i + k, 1);
+                    Agi = sparse(step_c + i + k, 1);
                     Agi(step_c + i) = -1;
                     Agi(step_c + i + j, :) = 1;
                     Lg = Lg + Agi * Q(1)^(-1) * Agi';
@@ -158,7 +166,7 @@ elseif mode == 2
         obj1 = -logdet_amd(I(4:end, 4:end), 'chol');
         t= log10(obj1);
         scale = real(floor(t));
-        obj = -obj1 + 10^scale * d * 0.2;
+        obj = -obj1 + 10^scale * d * 0.1;
     else
         Lg = Lg(2:end, 2:end);
         Lg = kron(Lg, eye(2));

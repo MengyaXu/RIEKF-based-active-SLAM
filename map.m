@@ -1,5 +1,5 @@
 
-mode = 4;
+mode = 3;
 if mode ==1
     % % spars
     L = [3 6 3 12 7 8 0 10 15 2 10 15];     % landmarks [x1 y1 x2 y2...]

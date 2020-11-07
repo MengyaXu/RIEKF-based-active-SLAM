@@ -1,4 +1,4 @@
-function u = getU(op, step, range, Le, k, i, x, P_last, P, u)
+function u = getU(op, step, range, Le, k, i, x, P_last, P, u, hgoal)
 load paraU flag goal w range_goal ku
 flag_last = flag;
 goal_last = goal;
@@ -31,11 +31,11 @@ if flag ~= 0
     delta = goal_last - xr;
     d_last = real(sqrt(delta' * delta));
     
-    trace(P)
+    trace_P = trace(P)
 %     upperbound = w * k + 10
 %     lowerbound = w * k
-    upperbound = w * (k + 1) + 5*i
-    lowerbound = w * (k + 1) + 5*i - 20
+    upperbound = w * (k + 1) + 0.9*i
+    lowerbound = w * (k + 1) + 0.9*i - 20
     if k == k_last && num_r == 0
         upperbound = w * k + 100 * i
         lowerbound = w * k
@@ -72,10 +72,10 @@ if flag ~= 0
     end
     
     if flag == 1
-        o = 'explore'
+        state = 'explore'
         goal = goal_e;
     elseif flag == 2
-        o = 'localization'
+        state = 'localization'
         if flag_last == 2
             goal = goal_last;
             if d_last < 10
@@ -85,19 +85,20 @@ if flag ~= 0
             goal = x(3+2*id_good-1:3+2*id_good);
         end
     elseif flag == 3
-        o = 'map'
+        state = 'map'
         goal = x(3+2*id_poor-1:3+2*id_poor);
         if flag_last == 3 && d_last < 10
-            w = w - 0.5;
+            w = w - 1;
         end
     elseif flag == 4
-        o = 'keep'
+        state = 'keep'
         goal = goal_last;
     end
     ku = k;
+%     set(hgoal, 'XData', goal(1), 'YData', goal(2));
     save paraU flag goal w range_goal ku '-append'
 end
-
+% pause(1);
        if op == 1      % predetermined
            if i < 25
                u(:, i) = [0; 2; 0];

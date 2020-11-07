@@ -3,51 +3,59 @@ clc;
 
 %%
 round = 0;
-for mode = [1 2 3 5]
+for mode = [1 3 2]
     round = round + 1;
 %     if round == 3
 %         op = 1;
 %     else
 %         op = 4;
 %     end
-    op = 4;
+    op = 1;
 
     if mode == 1
-        resultId = 1;
+        if op == 1
+            resultId = 17;
+        elseif op == 4
+            resultId = 12;
+        end
         str = 'EKF';
-%         s1 = 'EKF';
-        s1 = 'greedy+EKF';
+        s1 = 'EKF';
+%         s1 = 'greedy+EKF';
         setting_er = 'k-';
         setting_ef = 'k*';
         setting_tp = 'k-';
         setting_tu = 'k-';
     elseif mode == 3
         if op == 1
-            resultId = 2;
+            resultId = 17;
         else
-            resultId = 4;
+            resultId = 14;
         end
         str = 'IEKF';
-%         s3 = 'RIEKF';
-        s3 = 'greedy+RIEKF';
+        s3 = 'RIEKF';
+%         s3 = 'greedy+RIEKF';
         setting_er = 'r-';
         setting_ef = 'r*';
         setting_tp = 'r-';
         setting_tu = 'r-';
     elseif mode == 2
-        resultId = 2;
+        if op == 1
+            resultId = 0;
+        else
+            resultId = 14;
+        end
         mode = 2;
         op_2 = 1;
 %         str = 'IEKF';
 %         s2 = 'predetermined+RIEKF';
         str = 'NLSI';
-        s2 = str;
+        s2 = 'NLS';
         setting_er = 'b-';
         setting_ef = 'b*';
         setting_tp = 'b-';
         setting_tu = 'b-';
     elseif mode == 5
-        resultId = 2;
+        resultId = 12;
 %         mode = 2;
 %         op_2 = 2;
         str = 'NLSlb';
@@ -57,7 +65,7 @@ for mode = [1 2 3 5]
         setting_tp = 'c-';
         setting_tu = 'c-';
     elseif mode == 4
-        resultId = 2;
+        resultId = 17;
         str = 'NLSall';
         s4 = 'NLS';
         setting_er = 'b-';
@@ -102,9 +110,16 @@ for mode = [1 2 3 5]
             i = i + 1;
             er(j) = str2double(erline);
             er(j) = real(sqrt(er(j)));
-            if mode == 5 && er(j) > 1
-                er(j) = er(j - 1);
-            end
+%                     if rem(er(j),2*pi) > pi
+%                         er(j) = 2*pi - rem(er(j),2*pi);
+%                     elseif rem(er(j),2*pi) < -pi
+%                         er(j) = 2*pi + rem(er(j),2*pi);
+%                     else
+%                         er(j) = rem(er(j),2*pi);
+%                     end
+%             if mode == 5 && er(j) > 1
+%                 er(j) = er(j - 1);
+%             end
             if er(j) > er_max
                 er_max = er(j);
             end
@@ -140,7 +155,7 @@ for mode = [1 2 3 5]
         xlabel('x(step)');
         ylabel('y(m)');
         set(gca,'FontSize',16); 
-%         axis([0 500 0 8]);
+        axis([0 500 0 15]);
         hold on;
         figure(2)
         htp1 = plot(1:i, tp, setting_er, 'LineWidth',line);
@@ -273,10 +288,10 @@ end
 % legend(preFigTp, s1, s2, s3, s5);
 % legend(preFigTu, s1, s2, s3, s5);
 
-% preFigEr = [her1, her3, her2];
-% preFigTp = [htp1, htp3, htp2];
-% preFigTu = [htu1, htu3, htu2];
-% legend(preFigEr, s1, s3, s2);
-% legend(preFigTp, s1, s2, s3);
-% legend(preFigTu, s1, s2, s3);
+preFigEr = [her1, her3, her2];
+preFigTp = [htp1, htp3, htp2];
+preFigTu = [htu1, htu3, htu2];
+legend(preFigEr, s1, s3, s2);
+legend(preFigTp, s1, s2, s3);
+legend(preFigTu, s1, s2, s3);
 
