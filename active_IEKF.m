@@ -26,9 +26,9 @@ u = [];
 range = 20;
 head = 0;
 
-op_2 = 1;
 resultId = 0;
-mode = 2;   % 1 is EKF, 3 is IEKF
+mode = 2;   % 1 is EKF, 2 is NLS, 3 is IEKF
+op_2 = 1;   % 1 is NLSI, 2 is NLSlb
 op = 1;
 
 noise = 3;  % 1 random, 2 zero, 3 load
@@ -128,7 +128,7 @@ if sl2 == 1
     fprintf(fxr, '%f\t%f\t%f\n', x0(1),x0(2),x0(3));
 end
 if record == 1
-    video = VideoWriter(['movie/' str_op str num2str(resultId) '.avi']);
+    video = VideoWriter(['video/' str_op str num2str(resultId) '.avi']);
     open(video);
 end
 if mode == 1 || mode == 3
