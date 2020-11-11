@@ -3,14 +3,14 @@ clc;
 
 %%
 round = 0;
-for mode = [1 3 2]
+for mode = [1 2 3 5]
     round = round + 1;
 %     if round == 3
 %         op = 1;
 %     else
 %         op = 4;
 %     end
-    op = 1;
+    op = 4;
 
     if mode == 1
         if op == 1
@@ -44,7 +44,6 @@ for mode = [1 3 2]
         else
             resultId = 14;
         end
-        mode = 2;
         op_2 = 1;
 %         str = 'IEKF';
 %         s2 = 'predetermined+RIEKF';
@@ -55,7 +54,7 @@ for mode = [1 3 2]
         setting_tp = 'b-';
         setting_tu = 'b-';
     elseif mode == 5
-        resultId = 12;
+        resultId = 2;
 %         mode = 2;
 %         op_2 = 2;
         str = 'NLSlb';
@@ -117,9 +116,9 @@ for mode = [1 3 2]
 %                     else
 %                         er(j) = rem(er(j),2*pi);
 %                     end
-%             if mode == 5 && er(j) > 1
-%                 er(j) = er(j - 1);
-%             end
+            if mode == 5 && er(j) > 1
+                er(j) = er(j - 1);
+            end
             if er(j) > er_max
                 er_max = er(j);
             end
@@ -281,17 +280,17 @@ end
 % legend(preFigTp, s4, s3);
 % legend(preFigTu, s4, s3);
 
-% preFigEr = [her1, her2, her3, her5];
-% preFigTp = [htp1, htp2, htp3, htp5];
-% preFigTu = [htu1, htu2, htu3, htu5];
-% legend(preFigEr, s1, s2, s3, s5);
-% legend(preFigTp, s1, s2, s3, s5);
-% legend(preFigTu, s1, s2, s3, s5);
+preFigEr = [her1, her2, her3, her5];
+preFigTp = [htp1, htp2, htp3, htp5];
+preFigTu = [htu1, htu2, htu3, htu5];
+legend(preFigEr, s1, s2, s3, s5);
+legend(preFigTp, s1, s2, s3, s5);
+legend(preFigTu, s1, s2, s3, s5);
 
-preFigEr = [her1, her3, her2];
-preFigTp = [htp1, htp3, htp2];
-preFigTu = [htu1, htu3, htu2];
-legend(preFigEr, s1, s3, s2);
-legend(preFigTp, s1, s2, s3);
-legend(preFigTu, s1, s2, s3);
+% preFigEr = [her1, her3, her2];
+% preFigTp = [htp1, htp3, htp2];
+% preFigTu = [htu1, htu3, htu2];
+% legend(preFigEr, s1, s3, s2);
+% legend(preFigTp, s1, s2, s3);
+% legend(preFigTu, s1, s2, s3);
 
