@@ -20,16 +20,16 @@ cov_u = diag([sigma_theta^2, sigma_x^2, sigma_y^2]);
 cov_z = diag([sigma_r^2, sigma_beta^2]);
 save data_NLS cov_u cov_z
 
-step = 500;      % number of total steps
+step = 100;      % number of total steps
 x0 = [0; 0; 0];   % initial pose
 u = [];
-range = 20;
+range = 4;
 head = 0;
 
 resultId = 0;
-mode = 2;   % 1 is EKF, 2 is NLS, 3 is IEKF
+mode = 3;   % 1 is EKF, 2 is NLS, 3 is IEKF
 op_2 = 1;   % 1 is NLSI, 2 is NLSlb
-op = 1;
+op = 4;
 
 noise = 3;  % 1 random, 2 zero, 3 load
 sl = 0;
@@ -37,16 +37,19 @@ sl2 = 1;
 record = 1;
 fi = 1;
 
-w = 1;
+wk = 0.08;
+wn = 0;
+c = 5;
 range_goal = 40;
 
 if noise == 3
     load V V
     load W W
 end
-load map_obs L0 obstacle
+load map1 L0 obstacle
 
-Le0 = [0 0 0 100 100 100 100 0];
+% Le0 = [0 0 0 100 100 100 100 0];
+Le0 = [0 0 0 20 20 20 20 0];
 Le = Le0;
 k0 = length(L0)/2;
 count = 0;
@@ -59,7 +62,8 @@ for i = 1:k0
     h_gl = plot(L0(2*i-1), L0(2*i), '+black','MarkerSize',10);
     hold on;
 end
-axis([0 120 -20 120]);
+% axis([0 120 -20 120]);
+% axis([-5 25 -5 25]);
 set(gca,'FontSize',16); 
 for j = 1:length(obstacle)/3
     r = obstacle(3*j);
@@ -251,7 +255,7 @@ P = [cov_init zeros(3, 2*k);
     zeros(2*k, 3) cov_landmark];
 P_last = P;
 xrs = x(1:3);
-ellipse = 101;
+ellipse = 41;
 % make_plane(x(2:3), x(1), 0.75, 'b');
     hgoal = plot(0, 0, 'b.', 'MarkerSize',20);
 hgr = plot(pose_act(2, 1), pose_act(3, 1), 'k-', 'MarkerSize',20);
@@ -287,7 +291,7 @@ if mode == 2 || mode == 4
 end
 % ---------------
 ku = k;
-save paraU flag goal w range_goal ku
+save paraU flag goal wk wn c range_goal ku
 b = 0;
 % =========== main ==============
 for i = 1:step-1
@@ -671,9 +675,10 @@ if mode == 4
         fi = fi + 1;
     end
 end
-for  i = 1:3:step
-    make_plane(xrs(2:3, i), xrs(1, i), 0.75, 'b');
-end
+% for  i = 1:3:step
+%     make_plane(xrs(2:3, i), xrs(1, i), 0.75, 'b');
+% end
+
 %     if mode == 1 || mode == 3 || mode == 2 || mode == 4
 % %         ef_EKF = ef_EKF + (x(4:end)-L')'*cov_landmark^(-1)*(x(4:end)-L');
 %         ef_EKF = ef_EKF + (x(4:end)-L')'*P(4:end,4:end)^(-1)*(x(4:end)-L');
@@ -728,10 +733,10 @@ l = 'Estimate of the landmark (xf)';
 %     axis([-2 16 -1 16]);
 %     leg_NLS = copyobj([leg_EKF, gca], gcf);
 e_EKF = sum(er_EKF) + sum(ef_EKF);
-ef_total = sum(ef2);
+ef_total = sum(ef2)
 er_total = sum(er2);
 trace_P = trace(P);
-num = (length(L0) - length(L))/2;
+num = (length(L0) - length(L))/2
 %NEES;
 % end
 

@@ -1,6 +1,6 @@
 
 
-function [fig]=GetCov(P,x,y)
+function cv=GetCov(P,x,y)
 s=1; k=40;   % original: k=20, changed by zhan
 
 P=(P+P')/2; % add by Shoudong
@@ -15,7 +15,7 @@ for j=1:k+1
   q=2*pi*(j-1)/k; 
   cv(:,j)=s*3*r*[cos(q); sin(q)]+[x;y];
 end
-fig = plot(cv(1,:), cv(2,:), 'r');
+% fig = plot(cv(1,:), cv(2,:), 'r');
 % P is 2x2 covariance matrix, s is scale factor, x,y are estimated robot or landmark location
 
 % A typical call is 

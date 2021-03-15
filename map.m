@@ -1,5 +1,5 @@
 
-mode = 3;
+mode = 4;
 if mode ==1
     % % spars
     L = [3 6 3 12 7 8 0 10 15 2 10 15];     % landmarks [x1 y1 x2 y2...]
@@ -36,8 +36,8 @@ elseif mode == 4
     % random
     % obstacle = [90 80 8 85 15 5]';
     obstacle = [];
-    k = 50;
-    L0 = randi([1, 100], 1, 2*k);
+    k = 20;
+    L0 = randi([1, 20], 1, 2*k);
 end
 %%
 obstacle = [];
@@ -45,4 +45,4 @@ for j = 1:2:length(L0)
     obstacle = [obstacle' L0(j:j+1) 0]';
 end
 
-save map L0 obstacle
+save map1 L0 obstacle

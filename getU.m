@@ -1,5 +1,5 @@
 function u = getU(op, step, range, Le, k, i, x, P_last, P, u, hgoal)
-load paraU flag goal w range_goal ku
+load paraU flag goal wk wn c range_goal ku
 flag_last = flag;
 goal_last = goal;
 k_last = ku;
@@ -34,12 +34,15 @@ if flag ~= 0
     trace_P = trace(P)
 %     upperbound = w * k + 10
 %     lowerbound = w * k
-    upperbound = w * (k + 1) + 0.9*i
-    lowerbound = w * (k + 1) + 0.9*i - 20
-    if k == k_last && num_r == 0
-        upperbound = w * k + 100 * i
-        lowerbound = w * k
-    end
+
+    upperbound = wk * k + wn*i
+    lowerbound = upperbound / 2
+%     upperbound = wk * (k + 1) + wn*i
+%     lowerbound = wk * (k + 1) + wn*i - c
+%     if k == k_last && num_r == 0
+%         upperbound = w * k + 100 * i
+%         lowerbound = w * k
+%     end
     
     if trace(P) <= lowerbound
         flag = 1;
@@ -78,25 +81,25 @@ if flag ~= 0
         state = 'localization'
         if flag_last == 2
             goal = goal_last;
-            if d_last < 10
-                w = w + 0.5;
-            end
+%             if d_last < 10
+%                 wk = wk + 0.5;
+%             end
         else
             goal = x(3+2*id_good-1:3+2*id_good);
         end
     elseif flag == 3
         state = 'map'
         goal = x(3+2*id_poor-1:3+2*id_poor);
-        if flag_last == 3 && d_last < 10
-            w = w - 1;
-        end
+%         if flag_last == 3 && d_last < 10
+%             wk = wk - 1;
+%         end
     elseif flag == 4
         state = 'keep'
         goal = goal_last;
     end
     ku = k;
 %     set(hgoal, 'XData', goal(1), 'YData', goal(2));
-    save paraU flag goal w range_goal ku '-append'
+    save paraU flag goal wk wn range_goal ku '-append'
 end
 % pause(1);
        if op == 1      % predetermined
